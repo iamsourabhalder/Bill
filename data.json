@@ -98,6 +98,16 @@
           "extra": 0,
           "total": 0,
           "status": "Pending"
+        },
+        {
+          "itemId": "ITEM-172137",
+          "task": "Jusi",
+          "base": 20,
+          "gstRate": 3,
+          "gstAmount": 0.6,
+          "extra": 0,
+          "total": 20.6,
+          "status": "Pending"
         }
       ]
     },
