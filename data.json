@@ -15,16 +15,6 @@
           "extra": 0,
           "total": 47.2,
           "status": "Completed"
-        },
-        {
-          "itemId": "ITEM-131006",
-          "task": "Tata tree",
-          "base": 10,
-          "gstRate": 18,
-          "gstAmount": 1.7999999999999998,
-          "extra": 0,
-          "total": 11.8,
-          "status": "Completed"
         }
       ]
     },
@@ -42,6 +32,16 @@
           "extra": 0,
           "total": 10.3,
           "status": "Completed"
+        },
+        {
+          "itemId": "ITEM-450282",
+          "task": "Tata tree",
+          "base": 10,
+          "gstRate": 18,
+          "gstAmount": 1.7999999999999998,
+          "extra": 0,
+          "total": 11.8,
+          "status": "Pending"
         }
       ]
     }
