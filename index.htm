@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing Manager - Multi-Invoice & Payments</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+            --border: #e2e8f0;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3 { margin-top: 0; }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid var(--border);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        input, select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        button:hover { background-color: var(--primary-dark); }
+        button.danger { background-color: var(--danger); }
+        button.secondary { background-color: #64748b; }
+        button.success { background-color: var(--success); }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th { background-color: #f1f5f9; font-size: 0.85rem; }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        .badge.pending { background: #fef3c7; color: #d97706; }
+        .badge.completed { background: #dcfce7; color: #15803d; }
+        .badge.due { background: #fee2e2; color: #b91c1c; }
+        .badge.paid { background: #dcfce7; color: #15803d; }
+        .badge.partial { background: #fef3c7; color: #d97706; }
+
+        .totals-summary {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+
+        .totals-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .totals-row.grand {
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-top: 1px solid var(--border);
+            padding-top: 5px;
+        }
+
+        .totals-row.due-text {
+            color: var(--danger);
+            font-weight: bold;
+        }
+
+        .totals-row.paid-text {
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .bill-preview {
+            border: 1px dashed var(--primary);
+            padding: 20px;
+            background: #fff;
+            margin-top: 15px;
+        }
+
+        .action-bar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .customer-card {
+            background: #f1f5f9;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Billing & Task Dashboard</h1>
+
+    <!-- GitHub Settings -->
+    <div class="card">
+        <h2>GitHub Storage Setup</h2>
+        <div class="grid">
+            <div class="form-group">
+                <label>GitHub Personal Access Token</label>
+                <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxx">
+            </div>
+            <div class="form-group">
+                <label>Repository Owner / Username</label>
+                <input type="text" id="ghOwner" placeholder="username">
+            </div>
+            <div class="form-group">
+                <label>Repository Name</label>
+                <input type="text" id="ghRepo" placeholder="my-repo">
+            </div>
+            <div class="form-group">
+                <label>File Path</label>
+                <input type="text" id="ghPath" value="data.json">
+            </div>
+        </div>
+        <div class="action-bar">
+            <button onclick="saveToGitHub()">Save All Invoices to GitHub</button>
+            <button class="secondary" onclick="loadFromGitHub()">Fetch from GitHub</button>
+            <span id="syncStatus" style="font-weight: bold;"></span>
+        </div>
+    </div>
+
+    <!-- Active Invoice Controls & Switcher -->
+    <div class="card">
+        <h2>Invoice Workspace Management</h2>
+        <div class="grid">
+            <div class="form-group">
+                <label>Select Active Invoice</label>
+                <select id="invoiceSelect" onchange="switchInvoice()"></select>
+            </div>
+        </div>
+        <div class="action-bar">
+            <button class="success" onclick="createNewInvoice()">+ Open New Invoice</button>
+            <button class="danger" onclick="deleteActiveInvoice()">Delete Current Invoice</button>
+        </div>
+    </div>
+
+    <!-- Customer Information & Due Payment Tracker -->
+    <div class="card">
+        <h2>Customer Info & Due Payment Status</h2>
+        <div class="grid">
+            <div class="form-group">
+                <label>Customer Name</label>
+                <input type="text" id="custName" placeholder="Full Name" oninput="updateInvoiceMeta()">
+            </div>
+            <div class="form-group">
+                <label>Customer Phone Number</label>
+                <input type="text" id="custPhone" placeholder="+91 9876543210" oninput="updateInvoiceMeta()">
+            </div>
+            <div class="form-group">
+                <label>Customer Email / Address</label>
+                <input type="text" id="custAddress" placeholder="Address / Email" oninput="updateInvoiceMeta()">
+            </div>
+            <div class="form-group">
+                <label>Amount Paid Received (₹ / Rs)</label>
+                <input type="number" id="paidAmount" value="0" oninput="updateInvoiceMeta()">
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Item Form -->
+    <div class="card">
+        <h2>Add Item to Current Invoice</h2>
+        <div class="grid">
+            <div class="form-group">
+                <label>Item / Task Description</label>
+                <input type="text" id="taskDesc" placeholder="e.g. Graphic Design Services">
+            </div>
+            <div class="form-group">
+                <label>Base Price (₹ / Rs)</label>
+                <input type="number" id="baseAmount" value="0" oninput="calculateItemTotal()">
+            </div>
+            <div class="form-group">
+                <label>GST Rate (%)</label>
+                <input type="number" id="gstRate" value="18" oninput="calculateItemTotal()">
+            </div>
+            <div class="form-group">
+                <label>Other Tax / Charges (₹ / Rs)</label>
+                <input type="number" id="extraTax" value="0" oninput="calculateItemTotal()">
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select id="taskStatus">
+                    <option value="Pending">Pending</option>
+                    <option value="Completed">Completed</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="totals-summary">
+            <div class="totals-row"><span>Base Total:</span><span id="calcBase">₹0.00</span></div>
+            <div class="totals-row"><span>GST Amount:</span><span id="calcGst">₹0.00</span></div>
+            <div class="totals-row"><span>Extra Charges:</span><span id="calcExtra">₹0.00</span></div>
+            <div class="totals-row grand"><span>Item Total:</span><span id="calcTotal">₹0.00</span></div>
+        </div>
+
+        <button style="margin-top: 15px;" onclick="addItem()">Add Item to Current Invoice</button>
+    </div>
+
+    <!-- Active Invoice Items List -->
+    <div class="card">
+        <h2 id="activeInvoiceTitle">Current Invoice Items</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Item ID</th>
+                    <th>Task Description</th>
+                    <th>Base (Rs)</th>
+                    <th>GST</th>
+                    <th>Extra Tax</th>
+                    <th>Total (Rs)</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="todoTableBody"></tbody>
+        </table>
+    </div>
+
+    <!-- Invoice Preview -->
+    <div class="card">
+        <h2>Selected Invoice Preview</h2>
+        <div id="billPreviewContainer" class="bill-preview">
+            <div style="text-align: center;">
+                <h3 id="previewTitle">INVOICE PREVIEW</h3>
+                <p id="previewDate"></p>
+            </div>
+            
+            <div class="customer-card">
+                <h4 style="margin: 0 0 5px 0;">Customer Details:</h4>
+                <div><strong>Name:</strong> <span id="prevCustName">-</span></div>
+                <div><strong>Phone:</strong> <span id="prevCustPhone">-</span></div>
+                <div><strong>Address/Contact:</strong> <span id="prevCustAddress">-</span></div>
+            </div>
+
+            <table id="previewTable">
+                <thead>
+                    <tr>
+                        <th>Item ID</th>
+                        <th>Task</th>
+                        <th>Base Amount</th>
+                        <th>GST</th>
+                        <th>Tax/Charges</th>
+                        <th>Total (Rs)</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+            <div class="totals-summary">
+                <div class="totals-row"><span>Subtotal Base:</span><span id="summaryBase">₹0.00</span></div>
+                <div class="totals-row"><span>Total GST Tax:</span><span id="summaryGst">₹0.00</span></div>
+                <div class="totals-row"><span>Total Extra Charges:</span><span id="summaryExtra">₹0.00</span></div>
+                <div class="totals-row grand"><span>Grand Total Bill:</span><span id="summaryGrand">₹0.00</span></div>
+                <div class="totals-row paid-text"><span>Advance / Amount Paid:</span><span id="summaryPaid">₹0.00</span></div>
+                <div class="totals-row due-text"><span>Total Due Balance:</span><span id="summaryDue">₹0.00</span></div>
+                <div class="totals-row" style="margin-top: 10px;"><span>Payment Status:</span><span id="summaryPaymentBadge"></span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let appData = {
+        activeInvoiceId: null,
+        invoices: []
+    };
+
+    function generateId(prefix) {
+        return prefix + '-' + Math.floor(100000 + Math.random() * 900000);
+    }
+
+    function init() {
+        if (appData.invoices.length === 0) {
+            createNewInvoice();
+        } else {
+            renderInvoiceSelect();
+            renderActiveInvoice();
+        }
+    }
+
+    function createNewInvoice() {
+        const newInvoice = {
+            invoiceId: generateId('INV'),
+            customer: {
+                name: '',
+                phone: '',
+                address: ''
+            },
+            paidAmount: 0,
+            createdAt: new Date().toISOString(),
+            items: []
+        };
+        appData.invoices.push(newInvoice);
+        appData.activeInvoiceId = newInvoice.invoiceId;
+        
+        renderInvoiceSelect();
+        renderActiveInvoice();
+    }
+
+    function getActiveInvoice() {
+        return appData.invoices.find(inv => inv.invoiceId === appData.activeInvoiceId);
+    }
+
+    function switchInvoice() {
+        const select = document.getElementById('invoiceSelect');
+        appData.activeInvoiceId = select.value;
+        renderActiveInvoice();
+    }
+
+    function updateInvoiceMeta() {
+        const currentInv = getActiveInvoice();
+        if (currentInv) {
+            if (!currentInv.customer) currentInv.customer = {};
+            currentInv.customer.name = document.getElementById('custName').value;
+            currentInv.customer.phone = document.getElementById('custPhone').value;
+            currentInv.customer.address = document.getElementById('custAddress').value;
+            currentInv.paidAmount = parseFloat(document.getElementById('paidAmount').value) || 0;
+            
+            renderPreview();
+            renderInvoiceSelect();
+        }
+    }
+
+    function deleteActiveInvoice() {
+        if (appData.invoices.length <= 1) {
+            alert('Cannot delete the only remaining invoice. Create a new one first.');
+            return;
+        }
+
+        appData.invoices = appData.invoices.filter(inv => inv.invoiceId !== appData.activeInvoiceId);
+        appData.activeInvoiceId = appData.invoices[0].invoiceId;
+
+        renderInvoiceSelect();
+        renderActiveInvoice();
+    }
+
+    function renderInvoiceSelect() {
+        const select = document.getElementById('invoiceSelect');
+        select.innerHTML = '';
+        appData.invoices.forEach(inv => {
+            const opt = document.createElement('option');
+            opt.value = inv.invoiceId;
+            const cName = inv.customer && inv.customer.name ? inv.customer.name : 'Unnamed Customer';
+            opt.innerText = `${inv.invoiceId} (${cName})`;
+            if (inv.invoiceId === appData.activeInvoiceId) {
+                opt.selected = true;
+            }
+            select.appendChild(opt);
+        });
+    }
+
+    function calculateItemTotal() {
+        const base = parseFloat(document.getElementById('baseAmount').value) || 0;
+        const gstRate = parseFloat(document.getElementById('gstRate').value) || 0;
+        const extra = parseFloat(document.getElementById('extraTax').value) || 0;
+
+        const gstAmount = base * (gstRate / 100);
+        const total = base + gstAmount + extra;
+
+        document.getElementById('calcBase').innerText = `₹${base.toFixed(2)}`;
+        document.getElementById('calcGst').innerText = `₹${gstAmount.toFixed(2)}`;
+        document.getElementById('calcExtra').innerText = `₹${extra.toFixed(2)}`;
+        document.getElementById('calcTotal').innerText = `₹${total.toFixed(2)}`;
+
+        return { base, gstRate, gstAmount, extra, total };
+    }
+
+    function addItem() {
+        const currentInv = getActiveInvoice();
+        if (!currentInv) return;
+
+        const task = document.getElementById('taskDesc').value.trim();
+        const status = document.getElementById('taskStatus').value;
+
+        if (!task) {
+            alert('Please enter a task description.');
+            return;
+        }
+
+        const calc = calculateItemTotal();
+
+        const newItem = {
+            itemId: generateId('ITEM'),
+            task: task,
+            base: calc.base,
+            gstRate: calc.gstRate,
+            gstAmount: calc.gstAmount,
+            extra: calc.extra,
+            total: calc.total,
+            status: status
+        };
+
+        currentInv.items.push(newItem);
+        
+        // Reset form inputs
+        document.getElementById('taskDesc').value = '';
+        document.getElementById('baseAmount').value = '0';
+        document.getElementById('extraTax').value = '0';
+        calculateItemTotal();
+
+        renderActiveInvoice();
+    }
+
+    function toggleStatus(index) {
+        const currentInv = getActiveInvoice();
+        if (currentInv && currentInv.items[index]) {
+            currentInv.items[index].status = currentInv.items[index].status === 'Pending' ? 'Completed' : 'Pending';
+            renderActiveInvoice();
+        }
+    }
+
+    function removeItem(index) {
+        const currentInv = getActiveInvoice();
+        if (currentInv) {
+            currentInv.items.splice(index, 1);
+            renderActiveInvoice();
+        }
+    }
+
+    function renderActiveInvoice() {
+        const currentInv = getActiveInvoice();
+        if (!currentInv) return;
+
+        // Ensure customer structure exists
+        if (!currentInv.customer) {
+            currentInv.customer = { name: currentInv.clientName || '', phone: '', address: '' };
+        }
+
+        document.getElementById('custName').value = currentInv.customer.name || '';
+        document.getElementById('custPhone').value = currentInv.customer.phone || '';
+        document.getElementById('custAddress').value = currentInv.customer.address || '';
+        document.getElementById('paidAmount').value = currentInv.paidAmount || 0;
+        
+        document.getElementById('activeInvoiceTitle').innerText = `Items for ${currentInv.invoiceId}`;
+
+        const tbody = document.getElementById('todoTableBody');
+        tbody.innerHTML = '';
+
+        currentInv.items.forEach((item, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${item.itemId}</strong></td>
+                <td>${item.task}</td>
+                <td>₹${item.base.toFixed(2)}</td>
+                <td>₹${item.gstAmount.toFixed(2)} (${item.gstRate}%)</td>
+                <td>₹${item.extra.toFixed(2)}</td>
+                <td><strong>₹${item.total.toFixed(2)}</strong></td>
+                <td><span class="badge ${item.status.toLowerCase()}">${item.status}</span></td>
+                <td>
+                    <button class="secondary" onclick="toggleStatus(${index})">Toggle</button>
+                    <button class="danger" onclick="removeItem(${index})">Delete</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        renderPreview();
+    }
+
+    function renderPreview() {
+        const currentInv = getActiveInvoice();
+        if (!currentInv) return;
+
+        document.getElementById('previewTitle').innerText = `INVOICE: ${currentInv.invoiceId}`;
+        document.getElementById('prevCustName').innerText = currentInv.customer.name || 'N/A';
+        document.getElementById('prevCustPhone').innerText = currentInv.customer.phone || 'N/A';
+        document.getElementById('prevCustAddress').innerText = currentInv.customer.address || 'N/A';
+        document.getElementById('previewDate').innerText = `Created: ${new Date(currentInv.createdAt).toLocaleString()}`;
+
+        const tbody = document.querySelector('#previewTable tbody');
+        tbody.innerHTML = '';
+
+        let subtotalBase = 0;
+        let totalGst = 0;
+        let totalExtra = 0;
+        let grandTotal = 0;
+
+        currentInv.items.forEach(item => {
+            subtotalBase += item.base;
+            totalGst += item.gstAmount;
+            totalExtra += item.extra;
+            grandTotal += item.total;
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${item.itemId}</td>
+                <td>${item.task}</td>
+                <td>₹${item.base.toFixed(2)}</td>
+                <td>₹${item.gstAmount.toFixed(2)}</td>
+                <td>₹${item.extra.toFixed(2)}</td>
+                <td>₹${item.total.toFixed(2)}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        const paid = currentInv.paidAmount || 0;
+        const due = grandTotal - paid;
+
+        document.getElementById('summaryBase').innerText = `₹${subtotalBase.toFixed(2)}`;
+        document.getElementById('summaryGst').innerText = `₹${totalGst.toFixed(2)}`;
+        document.getElementById('summaryExtra').innerText = `₹${totalExtra.toFixed(2)}`;
+        document.getElementById('summaryGrand').innerText = `₹${grandTotal.toFixed(2)}`;
+        document.getElementById('summaryPaid').innerText = `₹${paid.toFixed(2)}`;
+        document.getElementById('summaryDue').innerText = `₹${due.toFixed(2)}`;
+
+        const badgeContainer = document.getElementById('summaryPaymentBadge');
+        if (due <= 0 && grandTotal > 0) {
+            badgeContainer.innerHTML = '<span class="badge paid">PAID IN FULL</span>';
+        } else if (paid > 0 && due > 0) {
+            badgeContainer.innerHTML = '<span class="badge partial">PARTIALLY PAID</span>';
+        } else {
+            badgeContainer.innerHTML = '<span class="badge due">PAYMENT DUE</span>';
+        }
+    }
+
+    // GitHub Integration
+    async function saveToGitHub() {
+        const token = document.getElementById('ghToken').value.trim();
+        const owner = document.getElementById('ghOwner').value.trim();
+        const repo = document.getElementById('ghRepo').value.trim();
+        const path = document.getElementById('ghPath').value.trim();
+        const statusEl = document.getElementById('syncStatus');
+
+        if (!token || !owner || !repo || !path) {
+            alert('Please complete all GitHub configuration fields.');
+            return;
+        }
+
+        statusEl.innerText = 'Saving all invoices...';
+        statusEl.style.color = 'orange';
+
+        const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+        const contentEncoded = btoa(unescape(encodeURIComponent(JSON.stringify(appData, null, 2))));
+
+        try {
+            let sha = '';
+            const getRes = await fetch(url, {
+                headers: { 'Authorization': `token ${token}` }
+            });
+
+            if (getRes.ok) {
+                const fileData = await getRes.json();
+                sha = fileData.sha;
+            }
+
+            const putRes = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: 'Update multi-invoice customer & payment data.json',
+                    content: contentEncoded,
+                    sha: sha ? sha : undefined
+                })
+            });
+
+            if (putRes.ok) {
+                statusEl.innerText = 'All invoices saved to data.json!';
+                statusEl.style.color = 'green';
+            } else {
+                const err = await putRes.json();
+                throw new Error(err.message || 'Save operation failed');
+            }
+        } catch (err) {
+            statusEl.innerText = 'Error: ' + err.message;
+            statusEl.style.color = 'red';
+        }
+    }
+
+    async function loadFromGitHub() {
+        const token = document.getElementById('ghToken').value.trim();
+        const owner = document.getElementById('ghOwner').value.trim();
+        const repo = document.getElementById('ghRepo').value.trim();
+        const path = document.getElementById('ghPath').value.trim();
+        const statusEl = document.getElementById('syncStatus');
+
+        if (!owner || !repo || !path) {
+            alert('Please fill in Owner, Repo, and Path fields.');
+            return;
+        }
+
+        statusEl.innerText = 'Fetching data...';
+        statusEl.style.color = 'orange';
+
+        const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+        const headers = {};
+        if (token) headers['Authorization'] = `token ${token}`;
+
+        try {
+            const res = await fetch(url, { headers });
+            if (res.ok) {
+                const fileData = await res.json();
+                const contentDecoded = decodeURIComponent(escape(atob(fileData.content)));
+                const loadedData = JSON.parse(contentDecoded);
+                
+                if (loadedData.invoices && Array.isArray(loadedData.invoices)) {
+                    appData = loadedData;
+                } else if (Array.isArray(loadedData.items)) {
+                    appData = {
+                        activeInvoiceId: 'INV-MIGRATED',
+                        invoices: [{
+                            invoiceId: 'INV-MIGRATED',
+                            customer: { name: loadedData.clientName || 'Default', phone: '', address: '' },
+                            paidAmount: 0,
+                            createdAt: new Date().toISOString(),
+                            items: loadedData.items
+                        }]
+                    };
+                }
+
+                renderInvoiceSelect();
+                renderActiveInvoice();
+                statusEl.innerText = 'Invoices loaded successfully!';
+                statusEl.style.color = 'green';
+            } else {
+                const err = await res.json();
+                throw new Error(err.message || 'Fetch operation failed');
+            }
+        } catch (err) {
+            statusEl.innerText = 'Error: ' + err.message;
+            statusEl.style.color = 'red';
+        }
+    }
+
+    window.onload = init;
+</script>
+
+</body>
+</html>
+
