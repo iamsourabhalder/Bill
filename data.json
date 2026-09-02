@@ -1,5 +1,5 @@
 {
-  "activeInvoiceId": "INV-874394",
+  "activeInvoiceId": "INV-766433",
   "invoices": [
     {
       "invoiceId": "INV-248851",
@@ -16,7 +16,13 @@
           "total": 47.2,
           "status": "Completed"
         }
-      ]
+      ],
+      "customer": {
+        "name": "Sourabhalder/8513001304",
+        "phone": "",
+        "address": ""
+      },
+      "paidAmount": 45
     },
     {
       "invoiceId": "INV-874394",
@@ -43,7 +49,46 @@
           "total": 11.8,
           "status": "Pending"
         }
+      ],
+      "customer": {
+        "name": "Sourabhalder/8513001304",
+        "phone": "",
+        "address": ""
+      },
+      "paidAmount": 20
+    },
+    {
+      "invoiceId": "INV-978450",
+      "customer": {
+        "name": "Sukhen",
+        "phone": "8513001304",
+        "address": "None"
+      },
+      "paidAmount": 25,
+      "createdAt": "2026-09-02T10:05:28.357Z",
+      "items": [
+        {
+          "itemId": "ITEM-315046",
+          "task": "Raja meri",
+          "base": 22,
+          "gstRate": 18,
+          "gstAmount": 3.96,
+          "extra": 0,
+          "total": 25.96,
+          "status": "Completed"
+        }
       ]
+    },
+    {
+      "invoiceId": "INV-766433",
+      "customer": {
+        "name": "",
+        "phone": "",
+        "address": ""
+      },
+      "paidAmount": 0,
+      "createdAt": "2026-09-02T10:06:37.381Z",
+      "items": []
     }
   ]
 }
