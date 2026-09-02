@@ -82,12 +82,34 @@
     {
       "invoiceId": "INV-766433",
       "customer": {
-        "name": "",
+        "name": "Riju",
         "phone": "",
         "address": ""
       },
       "paidAmount": 0,
       "createdAt": "2026-09-02T10:06:37.381Z",
+      "items": [
+        {
+          "itemId": "ITEM-751735",
+          "task": "Jusi",
+          "base": 0,
+          "gstRate": 18,
+          "gstAmount": 0,
+          "extra": 0,
+          "total": 0,
+          "status": "Pending"
+        }
+      ]
+    },
+    {
+      "invoiceId": "INV-873210",
+      "customer": {
+        "name": "",
+        "phone": "",
+        "address": ""
+      },
+      "paidAmount": 0,
+      "createdAt": "2026-09-02T15:30:03.415Z",
       "items": []
     }
   ]
