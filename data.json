@@ -1,3 +1,49 @@
-[
-
-]
+{
+  "activeInvoiceId": "INV-874394",
+  "invoices": [
+    {
+      "invoiceId": "INV-248851",
+      "clientName": "Sourabhalder/8513001304",
+      "createdAt": "2026-09-02T09:53:03.265Z",
+      "items": [
+        {
+          "itemId": "ITEM-781716",
+          "task": "Bitaniya Meri gold",
+          "base": 40,
+          "gstRate": 18,
+          "gstAmount": 7.199999999999999,
+          "extra": 0,
+          "total": 47.2,
+          "status": "Completed"
+        },
+        {
+          "itemId": "ITEM-131006",
+          "task": "Tata tree",
+          "base": 10,
+          "gstRate": 18,
+          "gstAmount": 1.7999999999999998,
+          "extra": 0,
+          "total": 11.8,
+          "status": "Completed"
+        }
+      ]
+    },
+    {
+      "invoiceId": "INV-874394",
+      "clientName": "Sourabhalder/8513001304",
+      "createdAt": "2026-09-02T09:55:12.400Z",
+      "items": [
+        {
+          "itemId": "ITEM-529044",
+          "task": "Dabor tutpast",
+          "base": 10,
+          "gstRate": 3,
+          "gstAmount": 0.3,
+          "extra": 0,
+          "total": 10.3,
+          "status": "Completed"
+        }
+      ]
+    }
+  ]
+}
