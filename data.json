@@ -1,37 +1,15 @@
 {
-  "activeInvoiceId": "INV-934591",
+  "activeInvoiceId": "INV-637640",
   "invoices": [
     {
-      "invoiceId": "INV-385178",
+      "invoiceId": "INV-637640",
       "customer": {
         "name": "",
         "phone": "",
         "address": ""
       },
       "paidAmount": 0,
-      "createdAt": "2026-09-03T04:17:17.440Z",
-      "items": []
-    },
-    {
-      "invoiceId": "INV-604267",
-      "customer": {
-        "name": "",
-        "phone": "",
-        "address": ""
-      },
-      "paidAmount": 0,
-      "createdAt": "2026-09-03T04:34:48.136Z",
-      "items": []
-    },
-    {
-      "invoiceId": "INV-934591",
-      "customer": {
-        "name": "",
-        "phone": "",
-        "address": ""
-      },
-      "paidAmount": 0,
-      "createdAt": "2026-09-03T04:34:49.869Z",
+      "createdAt": "2026-09-03T04:40:34.415Z",
       "items": []
     }
   ]
