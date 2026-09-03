@@ -1,125 +1,15 @@
 {
-  "activeInvoiceId": "INV-766433",
+  "activeInvoiceId": "INV-385178",
   "invoices": [
     {
-      "invoiceId": "INV-248851",
-      "clientName": "Sourabhalder/8513001304",
-      "createdAt": "2026-09-02T09:53:03.265Z",
-      "items": [
-        {
-          "itemId": "ITEM-781716",
-          "task": "Bitaniya Meri gold",
-          "base": 40,
-          "gstRate": 18,
-          "gstAmount": 7.199999999999999,
-          "extra": 0,
-          "total": 47.2,
-          "status": "Completed"
-        }
-      ],
-      "customer": {
-        "name": "Sourabhalder/8513001304",
-        "phone": "",
-        "address": ""
-      },
-      "paidAmount": 45
-    },
-    {
-      "invoiceId": "INV-874394",
-      "clientName": "Sourabhalder/8513001304",
-      "createdAt": "2026-09-02T09:55:12.400Z",
-      "items": [
-        {
-          "itemId": "ITEM-529044",
-          "task": "Dabor tutpast",
-          "base": 10,
-          "gstRate": 3,
-          "gstAmount": 0.3,
-          "extra": 0,
-          "total": 10.3,
-          "status": "Completed"
-        },
-        {
-          "itemId": "ITEM-450282",
-          "task": "Tata tree",
-          "base": 10,
-          "gstRate": 18,
-          "gstAmount": 1.7999999999999998,
-          "extra": 0,
-          "total": 11.8,
-          "status": "Pending"
-        }
-      ],
-      "customer": {
-        "name": "Sourabhalder/8513001304",
-        "phone": "",
-        "address": ""
-      },
-      "paidAmount": 20
-    },
-    {
-      "invoiceId": "INV-978450",
-      "customer": {
-        "name": "Sukhen",
-        "phone": "8513001304",
-        "address": "None"
-      },
-      "paidAmount": 25,
-      "createdAt": "2026-09-02T10:05:28.357Z",
-      "items": [
-        {
-          "itemId": "ITEM-315046",
-          "task": "Raja meri",
-          "base": 22,
-          "gstRate": 18,
-          "gstAmount": 3.96,
-          "extra": 0,
-          "total": 25.96,
-          "status": "Completed"
-        }
-      ]
-    },
-    {
-      "invoiceId": "INV-766433",
-      "customer": {
-        "name": "Riju",
-        "phone": "",
-        "address": ""
-      },
-      "paidAmount": 0,
-      "createdAt": "2026-09-02T10:06:37.381Z",
-      "items": [
-        {
-          "itemId": "ITEM-751735",
-          "task": "Jusi",
-          "base": 0,
-          "gstRate": 18,
-          "gstAmount": 0,
-          "extra": 0,
-          "total": 0,
-          "status": "Pending"
-        },
-        {
-          "itemId": "ITEM-172137",
-          "task": "Jusi",
-          "base": 20,
-          "gstRate": 3,
-          "gstAmount": 0.6,
-          "extra": 0,
-          "total": 20.6,
-          "status": "Pending"
-        }
-      ]
-    },
-    {
-      "invoiceId": "INV-873210",
+      "invoiceId": "INV-385178",
       "customer": {
         "name": "",
         "phone": "",
         "address": ""
       },
       "paidAmount": 0,
-      "createdAt": "2026-09-02T15:30:03.415Z",
+      "createdAt": "2026-09-03T04:17:17.440Z",
       "items": []
     }
   ]
