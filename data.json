@@ -1,15 +1,15 @@
 {
-  "activeInvoiceId": "INV-253062",
+  "activeInvoiceId": "INV-734893",
   "invoices": [
     {
-      "invoiceId": "INV-253062",
+      "invoiceId": "INV-734893",
       "customer": {
         "name": "",
         "phone": "",
         "address": ""
       },
       "paidAmount": 0,
-      "createdAt": "2026-09-03T05:09:19.489Z",
+      "createdAt": "2026-09-03T05:08:32.849Z",
       "items": []
     }
   ]
