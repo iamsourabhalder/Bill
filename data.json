@@ -1,26 +1,15 @@
 {
-  "activeInvoiceId": "INV-437222",
+  "activeInvoiceId": "INV-734893",
   "invoices": [
     {
-      "invoiceId": "INV-277544",
+      "invoiceId": "INV-734893",
       "customer": {
         "name": "",
         "phone": "",
         "address": ""
       },
       "paidAmount": 0,
-      "createdAt": "2026-09-03T05:08:17.030Z",
-      "items": []
-    },
-    {
-      "invoiceId": "INV-437222",
-      "customer": {
-        "name": "",
-        "phone": "",
-        "address": ""
-      },
-      "paidAmount": 0,
-      "createdAt": "2026-09-03T05:08:19.643Z",
+      "createdAt": "2026-09-03T05:08:32.849Z",
       "items": []
     }
   ]
